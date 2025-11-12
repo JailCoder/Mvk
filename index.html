@@ -5,30 +5,46 @@
   <title>🔧 РазожмёмВсё — разожмём всё, что затянуто</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    body{margin:0;font-family:system-ui;background:#111;color:#eee;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center}
-    h1{font-size:2rem;margin-bottom:1rem}
-    input{width:60vw;max-width:400px;padding:.6rem;font-size:1rem;border:none;border-radius:4px}
-    button{padding:.6rem 1.2rem;margin-left:.5rem;font-size:1rem;border:none;border-radius:4px;background:#ffcc00;color:#111;cursor:pointer}
-    .foot{margin-top:2rem;font-size:.9rem;opacity:.6}
+    body{margin:0;font-family:system-ui;background:#111;color:#eee;display:flex;flex-direction:column;height:100vh}
+    header{display:flex;align-items:center;padding:.5rem 1rem;background:#222}
+    input{flex:1;padding:.5rem;font-size:1rem;border:none;border-radius:4px}
+    button{padding:.5rem 1rem;margin-left:.5rem;font-size:1rem;border:none;border-radius:4px;background:#ffcc00;color:#111;cursor:pointer}
+    #viewer{width:100%;flex:1;border:none;background:#000}
+    .foot{padding:.5rem;text-align:center;font-size:.8rem;opacity:.6}
   </style>
 </head>
 <body>
-  <h1>🔧 РазожмёмВсё</h1>
-  <p>Разожмём всё, что затянуто!</p>
-  <form id="f" onsubmit="go();return false">
-    <input id="url" placeholder="https://youtube.com/watch?v=ACFvhTR__OI" autofocus>
-    <button type="submit">Go</button>
-  </form>
+  <header>
+    <input id="url" placeholder="https://www.youtube.com/watch?v=ACFvhTR__OI" autofocus>
+    <button id="go">Go</button>
+  </header>
+  <iframe id="viewer" name="viewer" allowfullscreen></iframe>
   <div class="foot">Работает 24 / 7</div>
 
 <script>
-function go(){
-  var raw = document.getElementById('url').value.trim();
-  if(!raw) return;
-  /* добавляем протокол, если нет */
-  if(!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
-  location.href = 'https://late-scene-c0e9.mark-toxxter.workers.dev/?url=' + encodeURIComponent(raw);
+/* конфиг */
+const WORKER = 'https://late-scene-c0e9.mark-toxxter.workers.dev/?url=';
+
+/* загрузка во фрейм */
+function load(raw){
+  const embed = raw.includes('youtube.com')
+    ? raw.replace('/watch?v=','/embed/').replace('youtu.be/','www.youtube.com/embed/').split('?')[0] + '?rel=0&showinfo=0'
+    : raw;
+  document.getElementById('viewer').src = WORKER + encodeURIComponent(embed);
+  document.getElementById('url').value  = raw;
 }
+
+/* кнопка */
+document.getElementById('go').onclick = function(){
+  let raw = document.getElementById('url').value.trim();
+  if(!raw) return;
+  if(!raw.startsWith('http')) raw = 'https://' + raw;
+  load(raw);
+};
+
+/* автозапуск по ?url=… */
+const u = new URLSearchParams(location.search).get('url');
+if(u) load(u);
 </script>
 </body>
 </html>
