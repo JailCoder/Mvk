@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MVK - РазожмёмВсё</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
             background: #000;
@@ -19,14 +14,12 @@
             height: 100vh;
             position: relative;
         }
-        
         #particles-js {
             position: absolute;
             width: 100%;
             height: 100%;
             z-index: 1;
         }
-        
         .container {
             position: relative;
             z-index: 2;
@@ -38,7 +31,6 @@
             text-align: center;
             padding: 20px;
         }
-        
         .donation-notice {
             background: linear-gradient(45deg, #ff0000, #ff6600);
             padding: 15px 30px;
@@ -46,10 +38,9 @@
             margin-bottom: 30px;
             font-size: 18px;
             font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(255,0,0,0.5);
             animation: pulse 2s infinite;
         }
-        
         .logo {
             font-size: 120px;
             font-weight: bold;
@@ -59,7 +50,6 @@
             text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
             animation: glow 2s infinite alternate;
         }
-        
         .slogan {
             font-size: 36px;
             margin-bottom: 10px;
@@ -68,27 +58,21 @@
             justify-content: center;
             gap: 15px;
         }
-        
         .slogan-text {
             font-size: 24px;
             opacity: 0.8;
             margin-bottom: 30px;
         }
-        
         .description {
             max-width: 600px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0,0,0,0.7);
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 30px;
             font-size: 18px;
             line-height: 1.6;
         }
-        
-        .slogan-icon {
-            font-size: 40px;
-        }
-        
+        .slogan-icon { font-size: 40px; }
         .login-btn {
             background: linear-gradient(45deg, #ff00cc, #3333ff);
             border: none;
@@ -100,37 +84,24 @@
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(102, 51, 255, 0.5);
+            box-shadow: 0 0 20px rgba(102,51,255,0.5);
         }
-        
         .login-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(102, 51, 255, 0.8);
+            box-shadow: 0 0 30px rgba(102,51,255,0.8);
         }
-        
         .lightning {
             position: absolute;
             background: white;
             opacity: 0;
             pointer-events: none;
         }
-        
         @keyframes glow {
-            from { text-shadow: 0 0 20px #00ffff, 0 0 ... }
+            from { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff; }
             to { text-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff; }
         }
-        
-        @keyframes lightning {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        @keyframes lightning { 0%,100% { opacity:0; } 50% { opacity:1; } }
+        @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
     </style>
 </head>
 <body>
@@ -155,7 +126,6 @@
         <button class="login-btn" id="loginBtn">Войти в интернет</button>
     </div>
 
-    <!-- Подключаем particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         // Частицы на фоне
@@ -179,58 +149,34 @@
             }
         });
 
-        // Молнии при наведении
+        // Молнии при наведении на кнопку
         const loginBtn = document.getElementById('loginBtn');
         
         loginBtn.addEventListener('mouseenter', function() {
-            createLightningEffect();
-            const interval = setInterval(createLightningEffect, 200);
-            loginBtn.addEventListener('mouseleave', () => clearInterval(interval), {once: true});
+            createLightning();
+            const int = setInterval(createLightning, 200);
+            loginBtn.addEventListener('mouseleave', () => clearInterval(int), {once: true});
         });
         
-        function createLightningEffect() {
+        function createLightning() {
             for (let i = 0; i < 5; i++) {
                 setTimeout(() => {
-                    const lightning = document.createElement('div');
-                    lightning.className = 'lightning';
-                    const width = Math.random() * 3 + 1;
-                    const height = Math.random() * 30 + 20;
-                    const left = Math.random() * 100;
-                    const top = Math.random() * 100;
-                    
-                    lightning.style.width = `${width}px`;
-                    lightning.style.height = `${height}px`;
-                    lightning.style.left = `${left}%`;
-                    lightning.style.top = `${top}%`;
-                    lightning.style.animation = 'lightning 0.3s forwards';
-                    
-                    loginBtn.appendChild(lightning);
-                    setTimeout(() => lightning.remove(), 300);
-                }, i * 100);
+                    const l = document.createElement('div');
+                    l.className = 'lightning';
+                    l.style.width = Math.random()*3+1 + 'px';
+                    l.style.height = Math.random()*30+20 + 'px';
+                    l.style.left = Math.random()*100 + '%';
+                    l.style.top = Math.random()*100 + '%';
+                    l.style.animation = 'lightning 0.3s forwards';
+                    loginBtn.appendChild(l);
+                    setTimeout(() => l.remove(), 300);
+                }, i*100);
             }
         }
 
-        // === ГЛАВНОЕ: ОТКРЫТИЕ azureserv.com/__cpi.php В НОВОЙ ВКЛАДКЕ ===
+        // === ОТКРЫВАЕМ https://proxygratis.id/en В НОВОЙ ВКЛАДКЕ ===
         loginBtn.addEventListener('click', function() {
-            // Формируем правильный URL как на azureserv (через base64)
-            function b64(str) {
-                return btoa(unescape(encodeURIComponent(str)))
-                    .replace(/\+/g, '-')
-                    .replace(/\//g, '_')
-                    .replace(/=+$/, '');
-            }
-
-            // Простой вариант: прямой вход через главную
-            const proxyUrl = 'https://azureserv.com';
-
-            // Или с __cpi.php (как в твоём примере) — можно раскомментировать
-            /*
-            const s = b64('https://google.com===');
-            const r = b64('https://azureserv.com/watch?v=dQw4w9WgXcQ&pp=ygUDAZQ');
-            const proxyUrl = `https://azureserv.com/__cpi.php?s=${s}&r=${r}&__cpo=1`;
-            */
-
-            window.open(proxyUrl, '_blank');
+            window.open('https://proxygratis.id/en', '_blank');
         });
     </script>
 </body>
