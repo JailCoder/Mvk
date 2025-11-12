@@ -213,9 +213,8 @@
         <div class="description">
             <p><strong>Как пользоваться:</strong></p>
             <p>1. Нажмите кнопку "Войти в интернет" ниже</p>
-            <p>2. Откроется прокси-сервис в полноэкранном режиме</p>
-            <p>3. Введите нужный адрес в строку поиска</p>
-            <p>4. Наслаждайтесь свободным доступом к информации!</p>
+            <p>2. Откроется прокси-сервис в iframe</p>
+            <p>3. Все ссылки и формы внутри iframe будут открываться в новых вкладках</p>
         </div>
         
         <button class="login-btn" id="loginBtn">Войти в интернет</button>
@@ -445,15 +444,69 @@
             }
         });
         
-        // Отключение скроллинга в iframe
+        // Модификация iframe для открытия всех ссылок и форм в новых вкладках
         mainFrame.addEventListener('load', function() {
             try {
                 const iframeDoc = mainFrame.contentDocument || mainFrame.contentWindow.document;
+                
+                // Отключение скроллинга
                 const style = iframeDoc.createElement('style');
                 style.textContent = 'body { overflow: hidden !important; }';
                 iframeDoc.head.appendChild(style);
+                
+                // Функция для модификации всех элементов
+                function modifyElements() {
+                    // Все ссылки
+                    const links = iframeDoc.querySelectorAll('a');
+                    links.forEach(link => {
+                        if (!link.hasAttribute('target')) {
+                            link.setAttribute('target', '_blank');
+                        }
+                    });
+                    
+                    // Все формы
+                    const forms = iframeDoc.querySelectorAll('form');
+                    forms.forEach(form => {
+                        if (!form.hasAttribute('target')) {
+                            form.setAttribute('target', '_blank');
+                        }
+                    });
+                    
+                    // Все кнопки с onclick
+                    const buttons = iframeDoc.querySelectorAll('button[onclick]');
+                    buttons.forEach(button => {
+                        const onclick = button.getAttribute('onclick');
+                        if (onclick && !onclick.includes('window.open')) {
+                            button.setAttribute('onclick', onclick.replace(/window\.location\.href\s*=/g, 'window.open(') + ')');
+                        }
+                    });
+                }
+                
+                // Применяем сразу
+                modifyElements();
+                
+                // Наблюдаем за изменениями в DOM для новых элементов
+                const observer = new MutationObserver(function(mutations) {
+                    let shouldModify = false;
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            shouldModify = true;
+                        }
+                    });
+                    if (shouldModify) {
+                        setTimeout(modifyElements, 100);
+                    }
+                });
+                
+                observer.observe(iframeDoc.body, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['onclick']
+                });
+                
             } catch (e) {
-                console.log('Не удалось отключить скроллинг в iframe');
+                console.log('Не удалось модифицировать iframe');
             }
         });
     </script>
