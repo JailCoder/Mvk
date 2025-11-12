@@ -115,6 +115,66 @@
             pointer-events: none;
         }
         
+        .iframe-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .iframe-mask-top, .iframe-mask-bottom {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 35%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1002;
+        }
+        
+        .iframe-mask-top {
+            top: 0;
+        }
+        
+        .iframe-mask-bottom {
+            bottom: 0;
+        }
+        
+        .particles-mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1001;
+        }
+        
+        .iframe-overlay iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1003;
+            font-size: 16px;
+        }
+        
         @keyframes glow {
             from {
                 text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
@@ -153,12 +213,25 @@
         <div class="description">
             <p><strong>Как пользоваться:</strong></p>
             <p>1. Нажмите кнопку "Войти в интернет" ниже</p>
-            <p>2. Вы попадете на прокси-сервис для обхода ограничений</p>
-            <p>3. Введите нужный адрес в строку поиска на открывшейся странице</p>
+            <p>2. Откроется прокси-сервис в полноэкранном режиме</p>
+            <p>3. Введите нужный адрес в строку поиска</p>
             <p>4. Наслаждайтесь свободным доступом к информации!</p>
         </div>
         
         <button class="login-btn" id="loginBtn">Войти в интернет</button>
+    </div>
+    
+    <div class="iframe-overlay" id="iframeOverlay">
+        <button class="close-btn" id="closeBtn">Закрыть</button>
+        <div class="iframe-container">
+            <div class="iframe-mask-top">
+                <div id="particles-top" class="particles-mask"></div>
+            </div>
+            <iframe src="https://proxygratis.id/en" id="mainFrame"></iframe>
+            <div class="iframe-mask-bottom">
+                <div id="particles-bottom" class="particles-mask"></div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -236,8 +309,84 @@
             }
         });
 
+        // Инициализация частиц для масок
+        function initMaskParticles(containerId) {
+            particlesJS(containerId, {
+                particles: {
+                    number: {
+                        value: 50,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: "#ffffff"
+                    },
+                    shape: {
+                        type: "circle",
+                        stroke: {
+                            width: 0,
+                            color: "#000000"
+                        }
+                    },
+                    opacity: {
+                        value: 0.3,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 2,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 2,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 100,
+                        color: "#ffffff",
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 1,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: {
+                            enable: false
+                        },
+                        onclick: {
+                            enable: false
+                        },
+                        resize: true
+                    }
+                }
+            });
+        }
+
         // Эффект молний на кнопке
         const loginBtn = document.getElementById('loginBtn');
+        const iframeOverlay = document.getElementById('iframeOverlay');
+        const closeBtn = document.getElementById('closeBtn');
+        const mainFrame = document.getElementById('mainFrame');
         
         loginBtn.addEventListener('mouseenter', function() {
             createLightningEffect();
@@ -275,9 +424,37 @@
             }
         }
         
-        // Переход по ссылке при клике
+        // Открытие iframe при клике
         loginBtn.addEventListener('click', function() {
-            window.location.href = 'https://proxygratis.id/en';
+            iframeOverlay.style.display = 'block';
+            // Инициализация частиц для масок после открытия
+            setTimeout(() => {
+                initMaskParticles('particles-top');
+                initMaskParticles('particles-bottom');
+            }, 100);
+        });
+        
+        // Закрытие iframe
+        closeBtn.addEventListener('click', function() {
+            iframeOverlay.style.display = 'none';
+            // Очистка частиц при закрытии
+            if (window.pJSDom && window.pJSDom.length > 2) {
+                window.pJSDom[1].pJS.fn.vendors.destroypJS();
+                window.pJSDom[2].pJS.fn.vendors.destroypJS();
+                window.pJSDom.splice(1, 2);
+            }
+        });
+        
+        // Отключение скроллинга в iframe
+        mainFrame.addEventListener('load', function() {
+            try {
+                const iframeDoc = mainFrame.contentDocument || mainFrame.contentWindow.document;
+                const style = iframeDoc.createElement('style');
+                style.textContent = 'body { overflow: hidden !important; }';
+                iframeDoc.head.appendChild(style);
+            } catch (e) {
+                console.log('Не удалось отключить скроллинг в iframe');
+            }
         });
     </script>
 </body>
