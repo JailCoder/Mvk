@@ -2,49 +2,64 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <title>🔧 РазожмёмВсё — разожмём всё, что затянуто</title>
+  <title>🔧 РазожмёмВсё — proxy browser</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     body{margin:0;font-family:system-ui;background:#111;color:#eee;display:flex;flex-direction:column;height:100vh}
     header{display:flex;align-items:center;padding:.5rem 1rem;background:#222}
     input{flex:1;padding:.5rem;font-size:1rem;border:none;border-radius:4px}
     button{padding:.5rem 1rem;margin-left:.5rem;font-size:1rem;border:none;border-radius:4px;background:#ffcc00;color:#111;cursor:pointer}
-    #viewer{width:100%;flex:1;border:none;background:#000}
+    #viewer{width:100%;flex:1;border:none;background:#fff}
     .foot{padding:.5rem;text-align:center;font-size:.8rem;opacity:.6}
   </style>
 </head>
 <body>
   <header>
-    <input id="url" placeholder="https://www.youtube.com/watch?v=ACFvhTR__OI" autofocus>
+    <input id="url" placeholder="https://any-site.com" autofocus>
     <button id="go">Go</button>
   </header>
-  <iframe id="viewer" name="viewer" allowfullscreen></iframe>
+  <div id="viewer"></div>
   <div class="foot">Работает 24 / 7</div>
 
 <script>
-/* конфиг */
+/* 1. регистрируем Service Worker */
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+
+/* 2. конфиг */
 const WORKER = 'https://late-scene-c0e9.mark-toxxter.workers.dev/?url=';
 
-/* загрузка во фрейм */
-function load(raw){
-  const embed = raw.includes('youtube.com')
-    ? raw.replace('/watch?v=','/embed/').replace('youtu.be/','www.youtube.com/embed/').split('?')[0] + '?rel=0&showinfo=0'
-    : raw;
-  document.getElementById('viewer').src = WORKER + encodeURIComponent(embed);
-  document.getElementById('url').value  = raw;
+/* 3. загрузка контента через SW */
+function loadSite(raw){
+  const b64 = btoa(raw);
+  fetch('/p/' + b64)
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById('viewer').innerHTML = html;
+      history.replaceState(null, null, '/p/' + b64);   // красивый URL
+    })
+    .catch(err => document.getElementById('viewer').innerHTML = '<h3>Ошибка загрузки</h3>');
+  document.getElementById('url').value = raw;
 }
 
-/* кнопка */
-document.getElementById('go').onclick = function(){
+/* 4. кнопка */
+document.getElementById('go').onclick = () => {
   let raw = document.getElementById('url').value.trim();
   if(!raw) return;
   if(!raw.startsWith('http')) raw = 'https://' + raw;
-  load(raw);
+  loadSite(raw);
 };
 
-/* автозапуск по ?url=… */
-const u = new URLSearchParams(location.search).get('url');
-if(u) load(u);
+/* 5. автозапуск по /p/… или ?url=… */
+const path = location.pathname;
+if(path.startsWith('/p/')){
+  try {
+    const raw = atob(path.slice(3));
+    loadSite(raw);
+  } catch(e){}
+} else {
+  const u = new URLSearchParams(location.search).get('url');
+  if(u) loadSite(u);
+}
 </script>
 </body>
 </html>
