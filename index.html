@@ -1,65 +1,284 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title>🔧 РазожмёмВсё — proxy browser</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body{margin:0;font-family:system-ui;background:#111;color:#eee;display:flex;flex-direction:column;height:100vh}
-    header{display:flex;align-items:center;padding:.5rem 1rem;background:#222}
-    input{flex:1;padding:.5rem;font-size:1rem;border:none;border-radius:4px}
-    button{padding:.5rem 1rem;margin-left:.5rem;font-size:1rem;border:none;border-radius:4px;background:#ffcc00;color:#111;cursor:pointer}
-    #viewer{width:100%;flex:1;border:none;background:#fff}
-    .foot{padding:.5rem;text-align:center;font-size:.8rem;opacity:.6}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVK - РазожмёмВсё</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .donation-notice {
+            background: linear-gradient(45deg, #ff0000, #ff6600);
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .logo {
+            font-size: 120px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
+            animation: glow 2s infinite alternate;
+        }
+        
+        .slogan {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .slogan-text {
+            font-size: 24px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .description {
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .slogan-icon {
+            font-size: 40px;
+        }
+        
+        .login-btn {
+            background: linear-gradient(45deg, #ff00cc, #3333ff);
+            border: none;
+            padding: 20px 50px;
+            font-size: 24px;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(102, 51, 255, 0.5);
+        }
+        
+        .login-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(102, 51, 255, 0.8);
+        }
+        
+        .lightning {
+            position: absolute;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
+            }
+            to {
+                text-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff;
+            }
+        }
+        
+        @keyframes lightning {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <input id="url" placeholder="https://any-site.com" autofocus>
-    <button id="go">Go</button>
-  </header>
-  <div id="viewer"></div>
-  <div class="foot">Работает 24 / 7</div>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <div class="donation-notice">⚠️ Проект принимает пожертвования в виде пачек акцизных сигарет ⚠️</div>
+        
+        <div class="logo">mvk</div>
+        <div class="slogan">
+            <span class="slogan-icon">🔧</span>
+            РазожмёмВсё
+        </div>
+        <div class="slogan-text">- что затянуто</div>
+        
+        <div class="description">
+            <p><strong>Как пользоваться:</strong></p>
+            <p>1. Нажмите кнопку "Войти в интернет" ниже</p>
+            <p>2. Вы попадете на прокси-сервис для обхода ограничений</p>
+            <p>3. Введите нужный адрес в строку поиска на открывшейся странице</p>
+            <p>4. Наслаждайтесь свободным доступом к информации!</p>
+        </div>
+        
+        <button class="login-btn" id="loginBtn">Войти в интернет</button>
+    </div>
 
-<script>
-/* 1. регистрируем Service Worker */
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Инициализация частиц
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffffff"
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                }
+            }
+        });
 
-/* 2. конфиг */
-const WORKER = 'https://late-scene-c0e9.mark-toxxter.workers.dev/?url=';
-
-/* 3. загрузка контента через SW */
-function loadSite(raw){
-  const b64 = btoa(raw);
-  fetch('/p/' + b64)
-    .then(r => r.text())
-    .then(html => {
-      document.getElementById('viewer').innerHTML = html;
-      history.replaceState(null, null, '/p/' + b64);   // красивый URL
-    })
-    .catch(err => document.getElementById('viewer').innerHTML = '<h3>Ошибка загрузки</h3>');
-  document.getElementById('url').value = raw;
-}
-
-/* 4. кнопка */
-document.getElementById('go').onclick = () => {
-  let raw = document.getElementById('url').value.trim();
-  if(!raw) return;
-  if(!raw.startsWith('http')) raw = 'https://' + raw;
-  loadSite(raw);
-};
-
-/* 5. автозапуск по /p/… или ?url=… */
-const path = location.pathname;
-if(path.startsWith('/p/')){
-  try {
-    const raw = atob(path.slice(3));
-    loadSite(raw);
-  } catch(e){}
-} else {
-  const u = new URLSearchParams(location.search).get('url');
-  if(u) loadSite(u);
-}
-</script>
+        // Эффект молний на кнопке
+        const loginBtn = document.getElementById('loginBtn');
+        
+        loginBtn.addEventListener('mouseenter', function() {
+            createLightningEffect();
+            const interval = setInterval(createLightningEffect, 200);
+            loginBtn.addEventListener('mouseleave', () => clearInterval(interval), {once: true});
+        });
+        
+        function createLightningEffect() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const lightning = document.createElement('div');
+                    lightning.className = 'lightning';
+                    
+                    // Случайные размеры и позиции для молний
+                    const width = Math.random() * 3 + 1;
+                    const height = Math.random() * 30 + 20;
+                    const left = Math.random() * 100;
+                    const top = Math.random() * 100;
+                    
+                    lightning.style.width = `${width}px`;
+                    lightning.style.height = `${height}px`;
+                    lightning.style.left = `${left}%`;
+                    lightning.style.top = `${top}%`;
+                    lightning.style.animation = 'lightning 0.3s forwards';
+                    
+                    loginBtn.appendChild(lightning);
+                    
+                    // Удаление элемента после анимации
+                    setTimeout(() => {
+                        if (lightning.parentNode) {
+                            lightning.parentNode.removeChild(lightning);
+                        }
+                    }, 300);
+                }, i * 100);
+            }
+        }
+        
+        // Переход по ссылке при клике
+        loginBtn.addEventListener('click', function() {
+            window.location.href = 'https://proxygratis.id/en';
+        });
+    </script>
 </body>
 </html>
