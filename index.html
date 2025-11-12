@@ -115,73 +115,9 @@
             pointer-events: none;
         }
         
-        .iframe-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .iframe-mask-top, .iframe-mask-bottom {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 35%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1002;
-        }
-        
-        .iframe-mask-top {
-            top: 0;
-        }
-        
-        .iframe-mask-bottom {
-            bottom: 0;
-        }
-        
-        .particles-mask {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1001;
-        }
-        
-        .iframe-overlay iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .close-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: red;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 1003;
-            font-size: 16px;
-        }
-        
         @keyframes glow {
-            from {
-                text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
-            }
-            to {
-                text-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff;
-            }
+            from { text-shadow: 0 0 20px #00ffff, 0 0 ... }
+            to { text-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff; }
         }
         
         @keyframes lightning {
@@ -201,191 +137,50 @@
     <div id="particles-js"></div>
     
     <div class="container">
-        <div class="donation-notice">⚠️ Проект принимает пожертвования в виде пачек акцизных сигарет ⚠️</div>
+        <div class="donation-notice">Проект принимает пожертвования в виде пачек акцизных сигарет</div>
         
         <div class="logo">mvk</div>
         <div class="slogan">
-            <span class="slogan-icon">🔧</span>
+            <span class="slogan-icon">Wrench</span>
             РазожмёмВсё
         </div>
         <div class="slogan-text">- что затянуто</div>
         
         <div class="description">
             <p><strong>Как пользоваться:</strong></p>
-            <p>1. Нажмите кнопку "Войти в интернет" ниже</p>
-            <p>2. Откроется прокси-сервис в iframe</p>
-            <p>3. Все ссылки и формы внутри iframe будут открываться в новых вкладках</p>
+            <p>Нажмите кнопку ниже — откроется анонимный прокси в новой вкладке</p>
+            <p>Там можно вводить любой сайт (YouTube, Google, ВК и т.д.)</p>
         </div>
         
         <button class="login-btn" id="loginBtn">Войти в интернет</button>
     </div>
-    
-    <div class="iframe-overlay" id="iframeOverlay">
-        <button class="close-btn" id="closeBtn">Закрыть</button>
-        <div class="iframe-container">
-            <div class="iframe-mask-top">
-                <div id="particles-top" class="particles-mask"></div>
-            </div>
-            <iframe src="https://proxygratis.id/en" id="mainFrame"></iframe>
-            <div class="iframe-mask-bottom">
-                <div id="particles-bottom" class="particles-mask"></div>
-            </div>
-        </div>
-    </div>
 
+    <!-- Подключаем particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Инициализация частиц
+        // Частицы на фоне
         particlesJS('particles-js', {
             particles: {
-                number: {
-                    value: 80,
-                    density: {
-                        enable: true,
-                        value_area: 800
-                    }
-                },
-                color: {
-                    value: "#ffffff"
-                },
-                shape: {
-                    type: "circle",
-                    stroke: {
-                        width: 0,
-                        color: "#000000"
-                    }
-                },
-                opacity: {
-                    value: 0.5,
-                    random: true,
-                    anim: {
-                        enable: true,
-                        speed: 1,
-                        opacity_min: 0.1,
-                        sync: false
-                    }
-                },
-                size: {
-                    value: 3,
-                    random: true,
-                    anim: {
-                        enable: true,
-                        speed: 2,
-                        size_min: 0.1,
-                        sync: false
-                    }
-                },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 2,
-                    direction: "none",
-                    random: true,
-                    straight: false,
-                    out_mode: "out",
-                    bounce: false
-                }
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1 } },
+                size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.1 } },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: "none", random: true, straight: false, out_mode: "out" }
             },
             interactivity: {
                 detect_on: "canvas",
                 events: {
-                    onhover: {
-                        enable: true,
-                        mode: "repulse"
-                    },
-                    onclick: {
-                        enable: true,
-                        mode: "push"
-                    },
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
                     resize: true
                 }
             }
         });
 
-        // Инициализация частиц для масок
-        function initMaskParticles(containerId) {
-            particlesJS(containerId, {
-                particles: {
-                    number: {
-                        value: 50,
-                        density: {
-                            enable: true,
-                            value_area: 800
-                        }
-                    },
-                    color: {
-                        value: "#ffffff"
-                    },
-                    shape: {
-                        type: "circle",
-                        stroke: {
-                            width: 0,
-                            color: "#000000"
-                        }
-                    },
-                    opacity: {
-                        value: 0.3,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 1,
-                            opacity_min: 0.1,
-                            sync: false
-                        }
-                    },
-                    size: {
-                        value: 2,
-                        random: true,
-                        anim: {
-                            enable: true,
-                            speed: 2,
-                            size_min: 0.1,
-                            sync: false
-                        }
-                    },
-                    line_linked: {
-                        enable: true,
-                        distance: 100,
-                        color: "#ffffff",
-                        opacity: 0.2,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 1,
-                        direction: "none",
-                        random: true,
-                        straight: false,
-                        out_mode: "out",
-                        bounce: false
-                    }
-                },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: {
-                            enable: false
-                        },
-                        onclick: {
-                            enable: false
-                        },
-                        resize: true
-                    }
-                }
-            });
-        }
-
-        // Эффект молний на кнопке
+        // Молнии при наведении
         const loginBtn = document.getElementById('loginBtn');
-        const iframeOverlay = document.getElementById('iframeOverlay');
-        const closeBtn = document.getElementById('closeBtn');
-        const mainFrame = document.getElementById('mainFrame');
         
         loginBtn.addEventListener('mouseenter', function() {
             createLightningEffect();
@@ -398,8 +193,6 @@
                 setTimeout(() => {
                     const lightning = document.createElement('div');
                     lightning.className = 'lightning';
-                    
-                    // Случайные размеры и позиции для молний
                     const width = Math.random() * 3 + 1;
                     const height = Math.random() * 30 + 20;
                     const left = Math.random() * 100;
@@ -412,102 +205,32 @@
                     lightning.style.animation = 'lightning 0.3s forwards';
                     
                     loginBtn.appendChild(lightning);
-                    
-                    // Удаление элемента после анимации
-                    setTimeout(() => {
-                        if (lightning.parentNode) {
-                            lightning.parentNode.removeChild(lightning);
-                        }
-                    }, 300);
+                    setTimeout(() => lightning.remove(), 300);
                 }, i * 100);
             }
         }
-        
-        // Открытие iframe при клике
+
+        // === ГЛАВНОЕ: ОТКРЫТИЕ azureserv.com/__cpi.php В НОВОЙ ВКЛАДКЕ ===
         loginBtn.addEventListener('click', function() {
-            iframeOverlay.style.display = 'block';
-            // Инициализация частиц для масок после открытия
-            setTimeout(() => {
-                initMaskParticles('particles-top');
-                initMaskParticles('particles-bottom');
-            }, 100);
-        });
-        
-        // Закрытие iframe
-        closeBtn.addEventListener('click', function() {
-            iframeOverlay.style.display = 'none';
-            // Очистка частиц при закрытии
-            if (window.pJSDom && window.pJSDom.length > 2) {
-                window.pJSDom[1].pJS.fn.vendors.destroypJS();
-                window.pJSDom[2].pJS.fn.vendors.destroypJS();
-                window.pJSDom.splice(1, 2);
+            // Формируем правильный URL как на azureserv (через base64)
+            function b64(str) {
+                return btoa(unescape(encodeURIComponent(str)))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
             }
-        });
-        
-        // Модификация iframe для открытия всех ссылок и форм в новых вкладках
-        mainFrame.addEventListener('load', function() {
-            try {
-                const iframeDoc = mainFrame.contentDocument || mainFrame.contentWindow.document;
-                
-                // Отключение скроллинга
-                const style = iframeDoc.createElement('style');
-                style.textContent = 'body { overflow: hidden !important; }';
-                iframeDoc.head.appendChild(style);
-                
-                // Функция для модификации всех элементов
-                function modifyElements() {
-                    // Все ссылки
-                    const links = iframeDoc.querySelectorAll('a');
-                    links.forEach(link => {
-                        if (!link.hasAttribute('target')) {
-                            link.setAttribute('target', '_blank');
-                        }
-                    });
-                    
-                    // Все формы
-                    const forms = iframeDoc.querySelectorAll('form');
-                    forms.forEach(form => {
-                        if (!form.hasAttribute('target')) {
-                            form.setAttribute('target', '_blank');
-                        }
-                    });
-                    
-                    // Все кнопки с onclick
-                    const buttons = iframeDoc.querySelectorAll('button[onclick]');
-                    buttons.forEach(button => {
-                        const onclick = button.getAttribute('onclick');
-                        if (onclick && !onclick.includes('window.open')) {
-                            button.setAttribute('onclick', onclick.replace(/window\.location\.href\s*=/g, 'window.open(') + ')');
-                        }
-                    });
-                }
-                
-                // Применяем сразу
-                modifyElements();
-                
-                // Наблюдаем за изменениями в DOM для новых элементов
-                const observer = new MutationObserver(function(mutations) {
-                    let shouldModify = false;
-                    mutations.forEach(function(mutation) {
-                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
-                            shouldModify = true;
-                        }
-                    });
-                    if (shouldModify) {
-                        setTimeout(modifyElements, 100);
-                    }
-                });
-                
-                observer.observe(iframeDoc.body, {
-                    childList: true,
-                    subtree: true,
-                    attributes: true,
-                    attributeFilter: ['onclick']
-                });
-                
-            } catch (e) {
-                console.log('Не удалось модифицировать iframe');
-            }
+
+            // Простой вариант: прямой вход через главную
+            const proxyUrl = 'https://azureserv.com';
+
+            // Или с __cpi.php (как в твоём примере) — можно раскомментировать
+            /*
+            const s = b64('https://google.com===');
+            const r = b64('https://azureserv.com/watch?v=dQw4w9WgXcQ&pp=ygUDAZQ');
+            const proxyUrl = `https://azureserv.com/__cpi.php?s=${s}&r=${r}&__cpo=1`;
+            */
+
+            window.open(proxyUrl, '_blank');
         });
     </script>
 </body>
